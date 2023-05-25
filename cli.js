@@ -20,7 +20,7 @@ const splitpath = filepath => {
 
 const fixpath = p => {
   const [path, file] = splitpath(p)
-  return `${path.toLowerCase()}/${file}`
+  return `${camelCaseToKebab(path)}/${file}`
 }
 
 const ABORT = msg => {
@@ -99,8 +99,8 @@ const pass1 = () => {
         if (dir.match(/[A-Z]/)) {
           const trimtp = tp.replace(/\/$/, '')
           if (!paths[trimtp]) {
-            paths[trimtp] = trimtp.toLowerCase()
-            gitcommands.push(`mv '${trimtp}' '${trimtp.toLowerCase()}'`)
+            paths[trimtp] = camelCaseToKebab(trimtp)
+            gitcommands.push(`mv '${trimtp}' '${camelCaseToKebab(trimtp)}'`)
           }
         }
       })
@@ -113,7 +113,9 @@ const pass1 = () => {
           gitcommands.push(`mv '${fixpath(path)}' '${tmppath}'`)
           gitcommands.push(`mv '${tmppath}' '${newpath}'`)
         } else {
-          gitcommands.push(`mv '${fixpath(path)}' '${newpath}'`)
+          if (fixpath(path) !== newpath) {
+            gitcommands.push(`mv '${fixpath(path)}' '${newpath}'`)
+          }
         }
       }
 
